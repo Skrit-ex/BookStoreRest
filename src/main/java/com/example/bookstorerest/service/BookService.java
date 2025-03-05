@@ -16,14 +16,14 @@ public class BookService {
     private BookRepository bookRepository;
 
 
-    public Optional<Book> findById (Long id) {
+    public Optional<Book> findById(Long id) {
         Optional<Book> bookId = bookRepository.findById(id);
-            if (bookId.isPresent()) {
-                log.info("User with id '" + id + ("' was found"));
-                return bookId;
-            } else {
-                log.warn("User with id '" + id + "' not found");
-                return Optional.empty();
+        if (bookId.isPresent()) {
+            log.info("User with id '" + id + ("' was found"));
+            return bookId;
+        } else {
+            log.warn("User with id '" + id + "' not found");
+            return Optional.empty();
         }
     }
 }
