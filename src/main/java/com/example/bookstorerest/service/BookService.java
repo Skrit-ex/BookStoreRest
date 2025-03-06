@@ -1,20 +1,21 @@
 package com.example.bookstorerest.service;
 
 import com.example.bookstorerest.entity.Book;
+import com.example.bookstorerest.entity.BookFullDescription;
 import com.example.bookstorerest.entity.User;
 import com.example.bookstorerest.repository.BookRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.Optional;
 
 @Slf4j
 @Service
 public class BookService {
+
+    private BookFullDescription bookFullDescription;
 
     @Autowired
     private BookRepository bookRepository;
@@ -73,6 +74,19 @@ public class BookService {
         }
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
         try (BufferedReader bufferedReader = createBufferReader(inputStreamReader)){
+            String line;
+            while ((line = bufferedReader.readLine()) != null){
+                if(!line.isEmpty()){
+                    String [] data = line.split("\\|");
+                    String nameBook = data[0];
+                    String description = data[1];
+                    bookFullDescription = new BookFullDescription(nameBook,description);
+                }
+            }
+        } catch (FileNotFoundException e) {
+            log.error("File not found (method void readAndSaveDescription)");
+        } catch (IOException e) {
+            log.error(" Error reading file (method void readAndSaveDescription)");
         }
     }
 }
