@@ -89,4 +89,30 @@ public class BookService {
             log.error(" Error reading file (method void readAndSaveDescription)");
         }
     }
+    public void readAndSaveBookLibrary(){
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("book.txt");
+        if(inputStream == null){
+            log.error("File not found or other error");
+            return;
+        }
+        InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+        try(BufferedReader bufferedReader = createBufferReader(inputStreamReader)){
+            String line;
+            while ((line = bufferedReader.readLine()) !=null){
+                if(!line.isEmpty()){
+                    String [] data = line.split("\\|");
+                    String nameBook = data[0];
+                    String nameAuthor = data[1];
+                    String genre = data[2];
+                    String description = data[3];
+                    Book booksLibrary = new Book(nameBook,nameAuthor,genre,description);
+                    bookRepository.save(booksLibrary);
+                }
+            }
+        }catch (FileNotFoundException e){
+            log.error("File not found");
+        }catch (IOException e){
+            log.error("error reading file");
+        }
+    }
 }
