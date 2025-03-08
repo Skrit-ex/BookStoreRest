@@ -1,7 +1,6 @@
 package com.example.bookstorerest.entity;
 
 import lombok.*;
-import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 
