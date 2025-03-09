@@ -54,6 +54,16 @@ public class BookService {
         }
     }
 
+    public Optional<Book> findByNameAuthor1(String nameAuthor){
+        return bookRepository.findByNameAuthor(nameAuthor).map(book -> {
+            log.info("Book with nameAuthor '" + nameAuthor + "' was found");
+            return Optional.of(book);
+        }).orElseGet(()->{
+            log.error("Book with nameAuthor '" + nameAuthor + "' wasn't found");
+            return Optional.empty();
+        });
+    }
+
     public Optional<Book> findByGenre(String genre) {
         Optional<Book> optionalBook = bookRepository.findByGenre(genre);
         if (optionalBook.isPresent()) {
