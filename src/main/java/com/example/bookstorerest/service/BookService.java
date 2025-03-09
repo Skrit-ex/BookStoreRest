@@ -120,14 +120,15 @@ public class BookService {
             log.error("error reading file");
         }
     }
-    public Optional<Book> deleteByNameBook(String nameBook){
-        Optional<Book> optionalBook = bookRepository.findByNameBook(nameBook);
-        if(optionalBook.isPresent()){
-            log.info("Book with nameBook '" + nameBook + "' was found");
-            return optionalBook;
-        }else {
+
+    public Optional<Book> deleteByNameBook(String nameBook) {
+        return bookRepository.findByNameBook(nameBook).map(book -> {
+            log.info("Book with nameBook '" + nameBook + "' was found and deleted");
+            bookRepository.delete(book);
+            return Optional.of(book);
+        }).orElseGet(() -> {
             log.error("Book with nameBook '" + nameBook + "' not found or other errors");
             return Optional.empty();
-        }
+        });
     }
 }
