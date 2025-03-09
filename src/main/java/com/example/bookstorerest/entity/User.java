@@ -2,6 +2,7 @@ package com.example.bookstorerest.entity;
 
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -11,6 +12,7 @@ import java.util.Set;
 @Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class User{
 
     @Id
