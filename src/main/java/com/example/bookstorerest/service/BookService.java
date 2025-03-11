@@ -113,15 +113,26 @@ public class BookService {
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
         try (BufferedReader bufferedReader = createBufferReader(inputStreamReader)) {
             String line;
+            int lines = 0;
             while ((line = bufferedReader.readLine()) != null) {
+                lines++;
+                if(lines <= 2) continue;
                 if (!line.isEmpty()) {
                     String[] data = line.split("\\|");
                     String nameBook = data[0].trim();
                     String nameAuthor = data[1].trim();
                     String genre = data[2].trim();
                     String description = data[3].trim();
-                    Book booksLibrary = new Book(nameBook, nameAuthor, genre, description);
-                    bookRepository.save(booksLibrary);
+
+                    Book bookExist = bookRepository.findByNameBookAndNameAuthor(nameBook, nameAuthor);
+                    if (bookExist != null) {
+                        bookExist.setGenre(genre);
+                        bookExist.setDescription(description);
+                        bookRepository.save(bookExist);
+                    } else {
+                        Book booksLibrary = new Book(nameBook, nameAuthor, genre, description);
+                        bookRepository.save(booksLibrary);
+                    }
                 }
             }
         } catch (FileNotFoundException e) {

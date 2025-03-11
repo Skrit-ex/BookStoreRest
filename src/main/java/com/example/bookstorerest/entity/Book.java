@@ -21,7 +21,7 @@ public class Book {
     private String description;
     private String genre;
 
-    public Book(String nameBook, String nameAuthor, String description, String genre) {
+    public Book(String nameBook, String nameAuthor, String genre, String description) {
         this.nameBook = nameBook;
         this.nameAuthor = nameAuthor;
         this.description = description;
