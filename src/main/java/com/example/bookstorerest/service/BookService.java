@@ -105,7 +105,7 @@ public class BookService {
     }
 
     public void readAndSaveBookLibrary() {
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("book.txt");
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("books.txt");
         if (inputStream == null) {
             log.error("File not found or other error");
             return;
@@ -116,10 +116,10 @@ public class BookService {
             while ((line = bufferedReader.readLine()) != null) {
                 if (!line.isEmpty()) {
                     String[] data = line.split("\\|");
-                    String nameBook = data[0];
-                    String nameAuthor = data[1];
-                    String genre = data[2];
-                    String description = data[3];
+                    String nameBook = data[0].trim();
+                    String nameAuthor = data[1].trim();
+                    String genre = data[2].trim();
+                    String description = data[3].trim();
                     Book booksLibrary = new Book(nameBook, nameAuthor, genre, description);
                     bookRepository.save(booksLibrary);
                 }

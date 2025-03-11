@@ -1,6 +1,7 @@
 package com.example.bookstorerest.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -9,6 +10,7 @@ import javax.persistence.*;
 @Table(name = "books")
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class Book {
 
     @Id
