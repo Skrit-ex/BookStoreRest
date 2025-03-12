@@ -155,4 +155,13 @@ public class BookService {
             return Optional.empty();
         });
     }
+    public Optional<BookFullDescription> getAllDescription(String nameBook){
+        return descriptionRepository.findByBookName(nameBook).map(descriptionBook -> {
+            log.info("BookDescription with bookName '" + nameBook + "' was found");
+            return Optional.of(descriptionBook);
+        }).orElseGet(() -> {
+            log.error("BookDescription with bookName '" + nameBook + "' was not found");
+            return Optional.empty();
+        });
+    }
 }

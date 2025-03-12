@@ -9,6 +9,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "fullDescription")
+@Data
 public class BookFullDescription {
 
     @Id
@@ -17,6 +18,7 @@ public class BookFullDescription {
     @NonNull
     private String bookName;
     @NonNull
+    @Column(name = "full_description", length = 1500)
     private String fullDescription;
 
 }
