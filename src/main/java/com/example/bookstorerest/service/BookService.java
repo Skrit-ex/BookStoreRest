@@ -88,7 +88,10 @@ public class BookService {
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
         try (BufferedReader bufferedReader = createBufferReader(inputStreamReader)) {
             String line;
+            int lineNumber = 0;
             while ((line = bufferedReader.readLine()) != null) {
+                lineNumber ++;
+                if(lineNumber <= 2) continue;
                 if (!line.isEmpty()) {
                     String[] data = line.split("\\|");
                     String nameBook = data[0];

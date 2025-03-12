@@ -26,7 +26,6 @@ public class UserController {
             return ResponseEntity.status(400).body("User exist, try again");
         } else {
             userRepository.save(user);
-            log.info("User was register");
             return ResponseEntity.ok("User was register");
         }
     }

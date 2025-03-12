@@ -18,17 +18,19 @@ public class BookController {
     private BookService bookService;
 
     @GetMapping("/updateBookLibrary")
-    public ResponseEntity<String> updateLibrary(){
+    public ResponseEntity<String> updateLibrary() {
         bookService.readAndSaveBookLibrary();
         return ResponseEntity.ok("Library was update");
     }
+
     @PostMapping("/deleteByNameBook/{nameBook}")
-    public ResponseEntity<String> delete(@PathVariable String nameBook){
+    public ResponseEntity<String> delete(@PathVariable String nameBook) {
         bookService.deleteByNameBook(nameBook);
         return ResponseEntity.ok("Book with nameBook '" + nameBook + "' was delete");
     }
+
     @DeleteMapping("/deleteAllBooks")
-    public ResponseEntity<String> deleteAllBooks(){
+    public ResponseEntity<String> deleteAllBooks() {
         bookRepository.deleteAll();
         return ResponseEntity.ok("BookLibrary is empty");
     }

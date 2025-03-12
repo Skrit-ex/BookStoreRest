@@ -24,7 +24,7 @@ public class Book {
     public Book(String nameBook, String nameAuthor, String genre, String description) {
         this.nameBook = nameBook;
         this.nameAuthor = nameAuthor;
-        this.description = description;
         this.genre = genre;
+        this.description = description;
     }
 }
