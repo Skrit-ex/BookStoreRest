@@ -137,6 +137,8 @@ public class BookService {
         },
                 () ->{
             BookFullDescription bookFullDescription = new BookFullDescription(nameBook, fullDescription);
+            Optional<Book> currentBook = bookRepository.findByNameBook(nameBook);
+            bookFullDescription.setBook(currentBook.get());
             log.info("Book and description was saved");
             descriptionRepository.save(bookFullDescription);
                 });
