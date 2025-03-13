@@ -4,7 +4,6 @@ package com.example.bookstorerest.controller;
 import com.example.bookstorerest.entity.Book;
 import com.example.bookstorerest.entity.BookFullDescription;
 import com.example.bookstorerest.repository.BookRepository;
-import com.example.bookstorerest.repository.FullDescriptionRepository;
 import com.example.bookstorerest.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,8 +24,7 @@ public class BookController {
 
     @GetMapping("/updateBookLibrary")
     public ResponseEntity<String> updateLibrary() {
-        bookService.readAndSaveBookLibrary();
-        bookService.readAndSaveDescription();
+        bookService.updateLibrary();
         return ResponseEntity.ok("Library was update");
     }
 
