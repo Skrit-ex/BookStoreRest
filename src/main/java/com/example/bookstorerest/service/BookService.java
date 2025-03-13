@@ -128,20 +128,23 @@ public class BookService {
             log.error("Invalid data format : {}", Arrays.toString(data));
             return;
         }
-        String nameBook = data[0];
-        String fullDescription = data[1];
+        String nameBook = data[0].trim();
+        String fullDescription = data[1].trim();
         descriptionRepository.findByBookName(nameBook).ifPresentOrElse(bookDescription ->{
             bookDescription.setFullDescription(fullDescription);
             log.warn("BookDescription for book :{}  was update", nameBook);
             descriptionRepository.save(bookDescription);
         },
-                () ->{
+            () ->{
             BookFullDescription bookFullDescription = new BookFullDescription(nameBook, fullDescription);
-            Optional<Book> currentBook = bookRepository.findByNameBook(nameBook);
-            bookFullDescription.setBook(currentBook.get());
-            log.info("Book and description was saved");
-            descriptionRepository.save(bookFullDescription);
-                });
+            bookRepository.findByNameBook(nameBook).ifPresentOrElse(currentBook ->{
+                bookFullDescription.setBook(currentBook);
+                log.info("Book and description was saved");
+                descriptionRepository.save(bookFullDescription);
+            }, () ->{
+                log.error("Book :{} not found in BookRepository", nameBook);
+                    });
+            });
 //        Optional<BookFullDescription> bookFullDescription = descriptionRepository.findByBookName(nameBook);
 //        if (bookFullDescription.isPresent()) {
 //            bookFullDescription.get().setFullDescription(fullDescription);

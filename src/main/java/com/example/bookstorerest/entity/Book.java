@@ -16,10 +16,16 @@ public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "name_book")
     private String nameBook;
+    @Column(name = "name_author")
     private String nameAuthor;
-    private String description;
+    @Column(name = "genre")
     private String genre;
+    @Column(name = "brief_description")
+    private String description;
+
 
     public Book(String nameBook, String nameAuthor, String genre, String description) {
         this.nameBook = nameBook;
