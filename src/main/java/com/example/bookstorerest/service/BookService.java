@@ -94,8 +94,8 @@ public class BookService {
                 if(lineNumber <= 2) continue;
                 if (!line.isEmpty()) {
                     String[] data = line.split("\\|");
-                    String nameBook = data[0];
-                    String description = data[1];
+                    String nameBook = data[0].trim();
+                    String description = data[1].trim();
                     BookFullDescription bookFullDescription = new BookFullDescription(nameBook, description);
                     descriptionRepository.save(bookFullDescription);
                 }
