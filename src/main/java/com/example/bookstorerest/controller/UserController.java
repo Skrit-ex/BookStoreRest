@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
+import java.util.Set;
+
 @Slf4j
 @RestController
 @RequestMapping("/user")
@@ -25,6 +27,7 @@ public class UserController {
         if (newUser.isPresent()) {
             return ResponseEntity.status(400).body("User exist, try again");
         } else {
+            user.setRoles(Set.of("USER"));
             userRepository.save(user);
             return ResponseEntity.ok("User was register");
         }

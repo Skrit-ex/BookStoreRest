@@ -144,14 +144,6 @@ public class BookService {
                 log.error("Book :{} not found in BookRepository", nameBook);
                     });
             });
-//        Optional<BookFullDescription> bookFullDescription = descriptionRepository.findByBookName(nameBook);
-//        if (bookFullDescription.isPresent()) {
-//            bookFullDescription.get().setFullDescription(fullDescription);
-//            descriptionRepository.save(bookFullDescription.get());
-//        } else {
-//            BookFullDescription description = new BookFullDescription(nameBook, fullDescription);
-//            descriptionRepository.save(description);
-//        }
     }
 
     public Optional<Book> deleteByNameBook(String nameBook) {
