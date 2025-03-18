@@ -57,11 +57,11 @@ public class BookService {
         }
     }
 
-    public Optional<Book> findByNameAuthor1(String nameAuthor){
+    public Optional<Book> findByNameAuthor1(String nameAuthor) {
         return bookRepository.findByNameAuthor(nameAuthor).map(book -> {
             log.info("Book with nameAuthor {} was found", nameAuthor);
             return Optional.of(book);
-        }).orElseGet(()->{
+        }).orElseGet(() -> {
             log.error("Book with nameAuthor {} wasn't found", nameAuthor);
             return Optional.empty();
         });
@@ -79,33 +79,34 @@ public class BookService {
     }
 
     @Transactional
-    public void updateLibrary(){
+    public void updateLibrary() {
         readAndSaveData("books.txt", this::parseBooks);
         readAndSaveData("bookDescription.txt", this::parseFullDescription);
     }
 
     public void readAndSaveData(String fileName, Consumer<String[]> dataProcessor) {
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName);
-        if (inputStream == null){
+        if (inputStream == null) {
             log.error("File not found with fileName -> {}", fileName);
             return;
         }
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-        try (BufferedReader bufferedReader = new BufferedReader(inputStreamReader)){
+        try (BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
             String line;
             int lineNumber = 0;
-            while ((line = bufferedReader.readLine()) != null){
+            while ((line = bufferedReader.readLine()) != null) {
                 lineNumber++;
-                if(lineNumber <=2) continue;
-                if(!line.isEmpty()){
+                if (lineNumber <= 2) continue;
+                if (!line.isEmpty()) {
                     String[] data = line.split("\\|");
                     dataProcessor.accept(data);
                 }
             }
-        }catch (IOException e){
+        } catch (IOException e) {
             log.error("Error reading fileName -> {}", fileName);
         }
     }
+
     private void parseBooks(String[] data) {
         String nameBook = data[0].trim();
         String nameAuthor = data[1].trim();
@@ -122,50 +123,53 @@ public class BookService {
             bookRepository.save(book);
         }
     }
+
     private void parseFullDescription(String[] data) {
-        if(data.length <2){
+        if (data.length < 2) {
             log.error("Invalid data format : {}", Arrays.toString(data));
             return;
         }
         String nameBook = data[0].trim();
         String fullDescription = data[1].trim();
-        descriptionRepository.findByBookName(nameBook).ifPresentOrElse(bookDescription ->{
-            bookDescription.setFullDescription(fullDescription);
-            log.warn("BookDescription for book :{}  was update", nameBook);
-            descriptionRepository.save(bookDescription);
-        },
-            () ->{
-            BookFullDescription bookFullDescription = new BookFullDescription(nameBook, fullDescription);
-            bookRepository.findByNameBook(nameBook).ifPresentOrElse(currentBook ->{
-                bookFullDescription.setBook(currentBook);
-                log.info("Book and description was saved");
-                descriptionRepository.save(bookFullDescription);
-            }, () ->{
-                log.error("Book :{} not found in BookRepository", nameBook);
+        descriptionRepository.findByBookName(nameBook).ifPresentOrElse(bookDescription -> {
+                    bookDescription.setFullDescription(fullDescription);
+                    log.warn("BookDescription for book :{}  was update", nameBook);
+                    descriptionRepository.save(bookDescription);
+                },
+                () -> {
+                    BookFullDescription bookFullDescription = new BookFullDescription(nameBook, fullDescription);
+                    bookRepository.findByNameBook(nameBook).ifPresentOrElse(currentBook -> {
+                        bookFullDescription.setBook(currentBook);
+                        log.info("Book and description was saved");
+                        descriptionRepository.save(bookFullDescription);
+                    }, () -> {
+                        log.error("Book :{} not found in BookRepository", nameBook);
                     });
-            });
+                });
     }
 
     public Optional<Book> deleteByNameBook(String nameBook) {
         return bookRepository.findByNameBook(nameBook).map(book -> {
-            log.info("Book with nameBook {} was found and deleted",nameBook);
+            log.info("Book with nameBook {} was found and deleted", nameBook);
             bookRepository.delete(book);
             return Optional.of(book);
         }).orElseGet(() -> {
-            log.error("Book with nameBook {} was not found",nameBook);
+            log.error("Book with nameBook {} was not found", nameBook);
             return Optional.empty();
         });
     }
-    public Optional<BookFullDescription> getAllDescription(String nameBook){
+
+    public Optional<BookFullDescription> getAllDescription(String nameBook) {
         return descriptionRepository.findByBookName(nameBook).map(descriptionBook -> {
-            log.info("BookDescription with bookName {} was found",nameBook);
+            log.info("BookDescription with bookName {} was found", nameBook);
             return Optional.of(descriptionBook);
         }).orElseGet(() -> {
-            log.error("BookDescription with bookName {} was not found",nameBook);
+            log.error("BookDescription with bookName {} was not found", nameBook);
             return Optional.empty();
         });
     }
-    public Optional<BookFullDescription> findDescriptionByNameBook(String nameBook){
+
+    public Optional<BookFullDescription> findDescriptionByNameBook(String nameBook) {
         return descriptionRepository.findByBookName(nameBook).map(book -> {
             log.error("Book {} was found", nameBook);
             return Optional.of(book);

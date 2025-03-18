@@ -19,37 +19,37 @@ public class UserService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
-    public Optional<User> findUserById(Long id){
+    public Optional<User> findUserById(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
-        if(optionalUser.isPresent()){
+        if (optionalUser.isPresent()) {
             log.info("User with id '" + id + "' was found");
-                return optionalUser;
-        }else {
+            return optionalUser;
+        } else {
             log.warn("User id not found or empty");
             return Optional.empty();
         }
     }
 
-    public Optional<User> findByUserName (String username){
+    public Optional<User> findByUserName(String username) {
         Optional<User> foundUserName = userRepository.findByUsername(username);
-        if(foundUserName.isPresent()){
+        if (foundUserName.isPresent()) {
             log.info("User with username '" + username + "' was found");
             return foundUserName;
-        }else {
+        } else {
             log.warn("UserName not found");
             return Optional.empty();
         }
     }
 
-    public Optional<List<User>> findAll (){
+    public Optional<List<User>> findAll() {
         List<User> allUser = userRepository.findAll();
         return Optional.of(allUser);
-        }
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> optionalUser = userRepository.findByUsername(username);
-        if(optionalUser.isPresent()){
+        if (optionalUser.isPresent()) {
             return optionalUser.get();
         }
         throw new UsernameNotFoundException("USer not found in details");
