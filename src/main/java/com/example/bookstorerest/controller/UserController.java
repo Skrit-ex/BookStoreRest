@@ -1,5 +1,6 @@
 package com.example.bookstorerest.controller;
 
+import com.example.bookstorerest.configuration.JwtUtil;
 import com.example.bookstorerest.entity.User;
 import com.example.bookstorerest.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,13 @@ public class UserController {
             userRepository.save(user);
             return ResponseEntity.ok("User was register");
         }
+    }
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @PostMapping("/login")
+    public String createToken(@RequestBody User user) {
+        return jwtUtil.generateToken(user.getUsername());
     }
 
 }

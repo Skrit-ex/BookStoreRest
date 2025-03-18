@@ -12,11 +12,14 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
 @Configuration
 public class SecurityConfiguration{
 
+    @Autowired
+    private JwtRequestFilter jwtRequestFilter;
     @Autowired
     private UserService userService;
 
@@ -28,10 +31,10 @@ public class SecurityConfiguration{
                         authorizeRequest
                                 .antMatchers("/", "/user/**").permitAll()
                                 .antMatchers("/admin").hasRole("ADMIN")
-                                .antMatchers("/library").authenticated()
+                                .antMatchers("/book/**").authenticated()
                                 .anyRequest().authenticated()
                 )
-                .httpBasic();
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }
 
