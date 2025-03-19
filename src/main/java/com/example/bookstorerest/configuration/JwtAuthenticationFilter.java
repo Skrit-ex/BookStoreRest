@@ -2,8 +2,6 @@ package com.example.bookstorerest.configuration;
 
 import com.example.bookstorerest.service.JwtService;
 import com.example.bookstorerest.service.UserService;
-import com.example.testprojectrest.service.JwtService;
-import com.example.testprojectrest.service.UserService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;

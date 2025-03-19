@@ -1,10 +1,8 @@
 package com.example.bookstorerest.service;
 
-package com.example.testprojectrest.service;
 
-import com.example.testprojectrest.entity.Role;
-import com.example.testprojectrest.entity.User;
-import com.example.testprojectrest.jwt.JwtAuthenticationResponse;
+import com.example.bookstorerest.configuration.JwtAuthenticationResponse;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,24 +18,24 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
+
     /**
      * Регистрация пользователя
      *
      * @param request данные пользователя
      * @return токен
      */
-    public JwtAuthenticationResponse signUp(SignUpRequest request) {
+    public JwtAuthenticationResponse signUp(com.example.bookstorerest.entity.User request) {
 
-        var user = User.builder()
+        var userDemo = User.builder()
                 .username(request.getUsername())
-                .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.ROLE_USER)
+                .roles("USER")
                 .build();
 
-        userService.create(user);
+        userService.create((com.example.bookstorerest.entity.User) userDemo);
 
-        var jwt = jwtService.generateToken(user);
+        var jwt = jwtService.generateToken(userDemo);
         return new JwtAuthenticationResponse(jwt);
     }
 
@@ -47,7 +45,7 @@ public class AuthenticationService {
      * @param request данные пользователя
      * @return токен
      */
-    public JwtAuthenticationResponse signIn(SignInRequest request) {
+    public JwtAuthenticationResponse signIn(com.example.bookstorerest.entity.User request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 request.getUsername(),
                 request.getPassword()

@@ -1,8 +1,9 @@
 package com.example.bookstorerest.controller;
 
-import com.example.bookstorerest.configuration.JwtUtil;
+import com.example.bookstorerest.configuration.JwtAuthenticationResponse;
 import com.example.bookstorerest.entity.User;
 import com.example.bookstorerest.repository.UserRepository;
+import com.example.bookstorerest.service.AuthenticationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,8 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private AuthenticationService authenticationService;
 
     @Operation(summary = "Регистрация пользователя")
     @PostMapping("/reg")
@@ -39,8 +42,8 @@ public class UserController {
     }
     @Operation(summary = "Авторизация пользователя")
     @PostMapping("/auth")
-    public ResponseEntity<String> login(@RequestBody User user){
-        return
+    public JwtAuthenticationResponse login(@RequestBody User user){
+        return authenticationService.signUp(user);
     }
 
 

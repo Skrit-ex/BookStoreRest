@@ -19,6 +19,15 @@ public class UserService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
+    public User create(User user){
+        Optional<User> optionalUser = userRepository.findByUsername(user.getUsername());
+        if(optionalUser.isPresent()){
+            throw new RuntimeException("User with already exist");
+        }else {
+            return userRepository.save(user);
+        }
+    }
+
     public Optional<User> findUserById(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isPresent()) {
@@ -53,5 +62,8 @@ public class UserService implements UserDetailsService {
             return optionalUser.get();
         }
         throw new UsernameNotFoundException("USer not found in details");
+    }
+    public UserDetailsService userDetailsService(){
+        return this::loadUserByUsername;
     }
 }
