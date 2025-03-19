@@ -3,6 +3,8 @@ package com.example.bookstorerest.controller;
 import com.example.bookstorerest.configuration.JwtUtil;
 import com.example.bookstorerest.entity.User;
 import com.example.bookstorerest.repository.UserRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +19,13 @@ import java.util.Set;
 @Slf4j
 @RestController
 @RequestMapping("/user")
+@Tag(name = "Аутентификация")
 public class UserController {
 
     @Autowired
     private UserRepository userRepository;
 
+    @Operation(summary = "Регистрация пользователя")
     @PostMapping("/reg")
     public ResponseEntity<String> register(@RequestBody User user) {
         Optional<User> newUser = userRepository.findByUsername(user.getUsername());
@@ -33,12 +37,11 @@ public class UserController {
             return ResponseEntity.ok("User was register");
         }
     }
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    @PostMapping("/login")
-    public String createToken(@RequestBody User user) {
-        return jwtUtil.generateToken(user.getUsername());
+    @Operation(summary = "Авторизация пользователя")
+    @PostMapping("/auth")
+    public ResponseEntity<String> login(@RequestBody User user){
+        return
     }
+
 
 }
