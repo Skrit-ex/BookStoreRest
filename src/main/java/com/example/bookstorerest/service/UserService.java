@@ -2,6 +2,7 @@ package com.example.bookstorerest.service;
 
 import com.example.bookstorerest.entity.User;
 import com.example.bookstorerest.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,18 +15,22 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-public class UserService implements UserDetailsService {
+@RequiredArgsConstructor
+public class UserService {
 
     @Autowired
     private UserRepository userRepository;
 
+    public User save(User user){
+        log.debug("saving user {}", user.getUsername());
+       return userRepository.save(user);
+    }
     public User create(User user){
-        Optional<User> optionalUser = userRepository.findByUsername(user.getUsername());
-        if(optionalUser.isPresent()){
-            throw new RuntimeException("User with already exist");
-        }else {
-            return userRepository.save(user);
+        Optional<User> byUsername = userRepository.findByUsername(user.getUsername());
+        if(byUsername.isPresent()){
+            throw new RuntimeException("exist");
         }
+        return save(user);
     }
 
     public Optional<User> findUserById(Long id) {
@@ -55,15 +60,12 @@ public class UserService implements UserDetailsService {
         return Optional.of(allUser);
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> optionalUser = userRepository.findByUsername(username);
-        if (optionalUser.isPresent()) {
-            return optionalUser.get();
-        }
-        throw new UsernameNotFoundException("USer not found in details");
+    public User getByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
+
     }
-    public UserDetailsService userDetailsService(){
-        return this::loadUserByUsername;
+    public UserDetailsService userDetailsService() {
+        return this::getByUsername;
     }
 }

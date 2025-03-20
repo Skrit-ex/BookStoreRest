@@ -3,12 +3,16 @@ package com.example.bookstorerest.service;
 
 import com.example.bookstorerest.configuration.JwtAuthenticationResponse;
 
+import com.example.bookstorerest.entity.SignInRequest;
+import com.example.bookstorerest.entity.SignUpRequest;
+import com.example.bookstorerest.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -25,17 +29,17 @@ public class AuthenticationService {
      * @param request данные пользователя
      * @return токен
      */
-    public JwtAuthenticationResponse signUp(com.example.bookstorerest.entity.User request) {
+    public JwtAuthenticationResponse signUp(SignUpRequest request) {
 
-        var userDemo = User.builder()
+        var user  = User.builder()
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .roles("USER")
+                .roles(Set.of("USER"))
                 .build();
 
-        userService.create((com.example.bookstorerest.entity.User) userDemo);
+        userService.create(user);
 
-        var jwt = jwtService.generateToken(userDemo);
+        var jwt = jwtService.generateToken(user);
         return new JwtAuthenticationResponse(jwt);
     }
 
@@ -45,7 +49,7 @@ public class AuthenticationService {
      * @param request данные пользователя
      * @return токен
      */
-    public JwtAuthenticationResponse signIn(com.example.bookstorerest.entity.User request) {
+    public JwtAuthenticationResponse signIn(SignInRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 request.getUsername(),
                 request.getPassword()
