@@ -16,7 +16,7 @@ import java.util.Optional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
@@ -60,12 +60,10 @@ public class UserService {
         return Optional.of(allUser);
     }
 
-    public User getByUsername(String username) {
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-    }
-    public UserDetailsService userDetailsService() {
-        return this::getByUsername;
     }
 }
