@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 public class SignUpRequest {
 
     @Schema(description = "Username", example = "Jon")
-    @Size(min = 3, max = 50, message = "Имя пользователя должно содержать от 5 до 50 символов")
+    @Size(min = 3, max = 50, message = "Username from 5 - 50 symbols")
     @NotBlank(message = "Filed cannot be empty")
     private String username;
 

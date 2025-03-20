@@ -36,7 +36,7 @@ public class UserService {
     public Optional<User> findUserById(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isPresent()) {
-            log.info("User with id '" + id + "' was found");
+            log.info("User with id {} was found", id);
             return optionalUser;
         } else {
             log.warn("User id not found or empty");
@@ -47,7 +47,7 @@ public class UserService {
     public Optional<User> findByUserName(String username) {
         Optional<User> foundUserName = userRepository.findByUsername(username);
         if (foundUserName.isPresent()) {
-            log.info("User with username '" + username + "' was found");
+            log.info("User with username {} was found",username);
             return foundUserName;
         } else {
             log.warn("UserName not found");
@@ -62,7 +62,7 @@ public class UserService {
 
     public User getByUsername(String username) {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
     }
     public UserDetailsService userDetailsService() {

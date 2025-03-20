@@ -24,10 +24,10 @@ public class AuthenticationService {
 
 
     /**
-     * Регистрация пользователя
+     * Registration
      *
-     * @param request данные пользователя
-     * @return токен
+     * @param request dataUser
+     * @return token
      */
     public JwtAuthenticationResponse signUp(SignUpRequest request) {
 
@@ -44,10 +44,10 @@ public class AuthenticationService {
     }
 
     /**
-     * Аутентификация пользователя
+     * Authentication user
      *
-     * @param request данные пользователя
-     * @return токен
+     * @param request dataUser
+     * @return token
      */
     public JwtAuthenticationResponse signIn(SignInRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(

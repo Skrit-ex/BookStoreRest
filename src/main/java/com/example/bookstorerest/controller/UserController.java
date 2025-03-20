@@ -25,7 +25,7 @@ import java.util.Set;
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
-@Tag(name = "Аутентификация")
+@Tag(name = "Authentication")
 public class UserController {
 
     @Autowired
@@ -47,11 +47,11 @@ public class UserController {
 //    }
 
     @PostMapping("/reg")
-    @Operation (summary = "регистрация")
+    @Operation (summary = "Registration")
     public JwtAuthenticationResponse register(@RequestBody @Valid SignUpRequest request){
             return authenticationService.signUp(request);
     }
-    @Operation(summary = "Авторизация пользователя")
+    @Operation(summary = "Authentication")
     @PostMapping("/auth")
     public JwtAuthenticationResponse login(@RequestBody @Valid SignInRequest request){
         return authenticationService.signIn(request);
