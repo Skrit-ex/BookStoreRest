@@ -6,6 +6,7 @@ import com.example.bookstorerest.entity.SignUpRequest;
 import com.example.bookstorerest.entity.User;
 import com.example.bookstorerest.repository.UserRepository;
 import com.example.bookstorerest.service.AuthenticationService;
+import com.example.bookstorerest.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -32,19 +33,9 @@ public class UserController {
     private UserRepository userRepository;
     @Autowired
     private AuthenticationService authenticationService;
+    @Autowired
+    private UserService userService;
 
-//    @Operation(summary = "Регистрация пользователя")
-//    @PostMapping("/reg")
-//    public ResponseEntity<String> register(@RequestBody User user) {
-//        Optional<User> newUser = userRepository.findByUsername(user.getUsername());
-//        if (newUser.isPresent()) {
-//            return ResponseEntity.status(400).body("User exist, try again");
-//        } else {
-//            user.setRoles(Set.of("USER"));
-//            userRepository.save(user);
-//            return ResponseEntity.ok("User was register");
-//        }
-//    }
 
     @PostMapping("/reg")
     @Operation (summary = "Registration")
@@ -56,10 +47,11 @@ public class UserController {
     public JwtAuthenticationResponse login(@RequestBody @Valid SignInRequest request){
         return authenticationService.signIn(request);
     }
-//    @Operation(summary = "GetCurrentUser")
-//    public JwtAuthenticationResponse getCurrentUser(){
-//        return authenticationService.
-//    }
-
+    @Operation(summary = "SaveAdmin")
+    @PostMapping("/admin")
+    public ResponseEntity <String> endpoint(@RequestBody User user){
+        userService.loginAdmin(user);
+        return ResponseEntity.ok("Saved");
+    }
 
 }

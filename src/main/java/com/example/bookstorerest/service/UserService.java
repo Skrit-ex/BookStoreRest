@@ -1,11 +1,13 @@
 package com.example.bookstorerest.service;
 
+import com.example.bookstorerest.configuration.EncoderConfig;
 import com.example.bookstorerest.configuration.SecurityConfiguration;
 import com.example.bookstorerest.entity.User;
 import com.example.bookstorerest.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -23,6 +26,8 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private EncoderConfig encoderConfig;
 
     public User save(User user){
         log.debug("saving user {}", user.getUsername());
@@ -124,5 +129,30 @@ public class UserService implements UserDetailsService {
         }
         log.error("Unsupported authentication principal type: {}", principal.getClass().getName());
         throw new RuntimeException("Unsupported authentication principal");
+    }
+    public void loginAdmin(User user){
+        if(user == null || user.getUsername() == null || user.getPassword()== null){
+            log.error("Invalid user data provided");
+            throw new IllegalArgumentException("User data is null or incomplete");
+        }
+        Optional<User> byUserName = findByUserName(user.getUsername());
+        if(byUserName.isEmpty()){
+            log.error(" User with userName {} not found", user.getUsername());
+            throw new UsernameNotFoundException("User not found");
+        }
+        User foundUser = byUserName.get();
+        if(!encoderConfig.passwordEncoder().matches(foundUser.getPassword(), user.getPassword())){
+            log.error("Invalid password for user {} ", user.getUsername());
+            throw new BadCredentialsException("Invalid password");
+        }
+        foundUser.setRoles(Set.of("ADMIN"));
+        foundUser.setPassword(encoderConfig.passwordEncoder().encode(user.getPassword()));
+        try {
+            userRepository.save(foundUser);
+            log.info("User {} elevated to admin was saved", user.getUsername());
+        }catch (Exception e){
+            log.error("Error saving user {}: {}", user.getUsername(), e.getMessage());
+            throw new RuntimeException("Error updating user details", e);
+        }
     }
 }
