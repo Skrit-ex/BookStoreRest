@@ -1,10 +1,13 @@
 package com.example.bookstorerest.service;
 
+import com.example.bookstorerest.configuration.SecurityConfiguration;
 import com.example.bookstorerest.entity.User;
 import com.example.bookstorerest.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -65,5 +68,61 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
+//    public User getCurrentUser(){
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        if(authentication != null){
+//            log.info("Authentication is authenticated {}", authentication.isAuthenticated());
+//            log.info("Authentication getPrincipal {}", authentication.getPrincipal());
+//
+//            if(authentication.isAuthenticated() && authentication.getPrincipal() instanceof UserDetails){
+//                log.info("User is authenticated");
+//                log.info("Principal is instance of UserDetails");
+//                UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+//                log.info(userDetails.getUsername(), " username");
+//                log.info("Authentication user {}", userDetails);
+//                User user = findByUserName(userDetails.getUsername()).orElse(null);
+//                if(user == null){
+//                    log.error("User not found with {}", userDetails.getUsername());
+//                }
+//                return user;
+//            }
+//            if(authentication.isAuthenticated() && authentication.getPrincipal() instanceof String){
+//                log.warn("Principal instance of string {}", authentication.getPrincipal());
+//                String username = (String) authentication.getPrincipal();
+//                User user = findByUserName(username).orElse(null);
+//                if(user == null){
+//                    log.error("User with username {} not found", username);
+//                }
+//                return user;
+//            }
+//        }else {
+//            log.warn("Principal has unknown type " + authentication.getPrincipal().getClass().getName());
+//        }
+//        log.error("User is not authenticated");
+//        throw new RuntimeException("User not authenticated");
+//    }
+    public User getCurrentUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if(authentication == null || !authentication.isAuthenticated()){
+            log.error("User not authenticated or not found");
+            throw  new RuntimeException("User not found");
+        }
+        Object principal = authentication.getPrincipal();
+        if(principal instanceof UserDetails userDetails){
+            return findByUserName(userDetails.getUsername()).orElseThrow(() -> {
+                log.error("User not found {}", userDetails.getUsername());
+                return new RuntimeException("User not found");
+            });
+            }
+        if(principal instanceof String userName){
+            return findByUserName(userName).orElseThrow(() ->{
+                log.error("User not found with {}", userName);
+                return new RuntimeException("User not found");
+            });
+        }
+        log.error("Unsupported authentication principal type: {}", principal.getClass().getName());
+        throw new RuntimeException("Unsupported authentication principal");
     }
 }

@@ -56,6 +56,10 @@ public class UserController {
     public JwtAuthenticationResponse login(@RequestBody @Valid SignInRequest request){
         return authenticationService.signIn(request);
     }
+//    @Operation(summary = "GetCurrentUser")
+//    public JwtAuthenticationResponse getCurrentUser(){
+//        return authenticationService.
+//    }
 
 
 }
