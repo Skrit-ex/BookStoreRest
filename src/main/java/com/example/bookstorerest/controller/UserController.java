@@ -50,7 +50,7 @@ public class UserController {
     @Operation(summary = "SaveAdmin")
     @PostMapping("/admin")
     public ResponseEntity <String> endpoint(@RequestBody User user){
-        userService.loginAdmin(user);
+        userService.regAdmin(user);
         return ResponseEntity.ok("Saved");
     }
 
