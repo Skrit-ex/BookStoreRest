@@ -1,6 +1,7 @@
 package com.example.bookstorerest.service;
 
 import com.example.bookstorerest.configuration.EncoderConfig;
+import com.example.bookstorerest.configuration.JwtAuthenticationResponse;
 import com.example.bookstorerest.configuration.SecurityConfiguration;
 import com.example.bookstorerest.entity.User;
 import com.example.bookstorerest.repository.UserRepository;
@@ -133,7 +134,7 @@ public class UserService implements UserDetailsService {
         log.error("Unsupported authentication principal type: {}", principal.getClass().getName());
         throw new RuntimeException("Unsupported authentication principal");
     }
-    public void regAdmin(User user){
+    public String regAdmin(User user){
         if(user == null || user.getUsername() == null || user.getPassword()== null){
             log.error("Invalid user data provided");
             throw new IllegalArgumentException("User data is null or incomplete");
@@ -153,6 +154,7 @@ public class UserService implements UserDetailsService {
             userRepository.save(newUser);
             log.info("User {} elevated to admin was saved", user.getUsername());
             String jwt = jwtService.generateToken(newUser);
+            return jwt;
         }catch (Exception e){
             log.error("Error saving user {}: {}", user.getUsername(), e.getMessage());
             throw new RuntimeException("Error updating user details", e);

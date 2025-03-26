@@ -49,9 +49,9 @@ public class UserController {
     }
     @Operation(summary = "SaveAdmin")
     @PostMapping("/admin")
-    public ResponseEntity <String> endpoint(@RequestBody User user){
-        userService.regAdmin(user);
-        return ResponseEntity.ok("Saved");
+    public ResponseEntity <JwtAuthenticationResponse> endpoint(@RequestBody User user){
+        String jwt = userService.regAdmin(user);
+        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
     }
 
 }
