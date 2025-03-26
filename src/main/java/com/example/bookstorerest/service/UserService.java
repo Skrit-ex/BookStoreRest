@@ -29,6 +29,9 @@ public class UserService implements UserDetailsService {
     @Autowired
     private EncoderConfig encoderConfig;
 
+    @Autowired
+    private JwtService jwtService;
+
     public User save(User user){
         log.debug("saving user {}", user.getUsername());
        return userRepository.save(user);
@@ -130,26 +133,26 @@ public class UserService implements UserDetailsService {
         log.error("Unsupported authentication principal type: {}", principal.getClass().getName());
         throw new RuntimeException("Unsupported authentication principal");
     }
-    public void loginAdmin(User user){
+    public void regAdmin(User user){
         if(user == null || user.getUsername() == null || user.getPassword()== null){
             log.error("Invalid user data provided");
             throw new IllegalArgumentException("User data is null or incomplete");
         }
         Optional<User> byUserName = findByUserName(user.getUsername());
-        if(byUserName.isEmpty()){
-            log.error(" User with userName {} not found", user.getUsername());
-            throw new UsernameNotFoundException("User not found");
+        if(byUserName.isPresent()){
+            log.error(" User with userName {} already exist", user.getUsername());
+            throw new IllegalArgumentException("User already exist");
         }
-        User foundUser = byUserName.get();
-        if(!encoderConfig.passwordEncoder().matches(foundUser.getPassword(), user.getPassword())){
-            log.error("Invalid password for user {} ", user.getUsername());
-            throw new BadCredentialsException("Invalid password");
-        }
-        foundUser.setRoles(Set.of("ADMIN"));
-        foundUser.setPassword(encoderConfig.passwordEncoder().encode(user.getPassword()));
+         User newUser = User.builder().
+                 username(user.getUsername()).
+                 password(encoderConfig.passwordEncoder().encode(user.getPassword())).
+                 roles(Set.of("ADMIN")).
+                 build();
+
         try {
-            userRepository.save(foundUser);
+            userRepository.save(newUser);
             log.info("User {} elevated to admin was saved", user.getUsername());
+            String jwt = jwtService.generateToken(newUser);
         }catch (Exception e){
             log.error("Error saving user {}: {}", user.getUsername(), e.getMessage());
             throw new RuntimeException("Error updating user details", e);
