@@ -163,14 +163,14 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public void deleteUser(User user) {
-        userRepository.findByUsername(user.getUsername()).ifPresentOrElse(
+    public void deleteUser(String username) {
+        userRepository.findByUsername(username).ifPresentOrElse(
                 user1 -> {
                     userRepository.delete(user1);
-                    log.info("User {} delete successfully",user.getUsername());
+                    log.info("User {} delete successfully", username);
                 },
                 () ->
-                        log.error("User {} not found", user.getUsername())
+                    log.error("User {} not found", username)
         );
     }
 }

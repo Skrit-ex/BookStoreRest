@@ -21,8 +21,8 @@ public class AdminController {
         return ResponseEntity.ok(user);
     }
     @Operation(summary = "delete User")
-    @PostMapping("/deleteUser")
-    public ResponseEntity<String> deleteUser(@RequestBody User user){
+    @PostMapping("/deleteUser/{username}")
+    public ResponseEntity<String> deleteUser(@RequestBody User user, @PathVariable String username){
             return ResponseEntity.ok("user " + user.getUsername() + " was deleted");
     }
 }
