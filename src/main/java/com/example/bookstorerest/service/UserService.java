@@ -33,13 +33,14 @@ public class UserService implements UserDetailsService {
     @Autowired
     private JwtService jwtService;
 
-    public User save(User user){
+    public User save(User user) {
         log.debug("saving user {}", user.getUsername());
-       return userRepository.save(user);
+        return userRepository.save(user);
     }
-    public User create(User user){
+
+    public User create(User user) {
         Optional<User> byUsername = userRepository.findByUsername(user.getUsername());
-        if(byUsername.isPresent()){
+        if (byUsername.isPresent()) {
             throw new RuntimeException("exist");
         }
         return save(user);
@@ -59,7 +60,7 @@ public class UserService implements UserDetailsService {
     public Optional<User> findByUserName(String username) {
         Optional<User> foundUserName = userRepository.findByUsername(username);
         if (foundUserName.isPresent()) {
-            log.info("User with username {} was found",username);
+            log.info("User with username {} was found", username);
             return foundUserName;
         } else {
             log.warn("UserName not found");
@@ -78,7 +79,8 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
-//    public User getCurrentUser(){
+
+    //    public User getCurrentUser(){
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 //        if(authentication != null){
 //            log.info("Authentication is authenticated {}", authentication.isAuthenticated());
@@ -111,22 +113,22 @@ public class UserService implements UserDetailsService {
 //        log.error("User is not authenticated");
 //        throw new RuntimeException("User not authenticated");
 //    }
-    public User getCurrentUser(){
+    public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if(authentication == null || !authentication.isAuthenticated()){
+        if (authentication == null || !authentication.isAuthenticated()) {
             log.error("User not authenticated or not found");
-            throw  new RuntimeException("User not found");
+            throw new RuntimeException("User not found");
         }
         Object principal = authentication.getPrincipal();
-        if(principal instanceof UserDetails userDetails){
+        if (principal instanceof UserDetails userDetails) {
             return findByUserName(userDetails.getUsername()).orElseThrow(() -> {
                 log.error("User not found {}", userDetails.getUsername());
                 return new RuntimeException("User not found");
             });
-            }
-        if(principal instanceof String userName){
-            return findByUserName(userName).orElseThrow(() ->{
+        }
+        if (principal instanceof String userName) {
+            return findByUserName(userName).orElseThrow(() -> {
                 log.error("User not found with {}", userName);
                 return new RuntimeException("User not found");
             });
@@ -134,29 +136,41 @@ public class UserService implements UserDetailsService {
         log.error("Unsupported authentication principal type: {}", principal.getClass().getName());
         throw new RuntimeException("Unsupported authentication principal");
     }
-    public String regAdmin(User user){
-        if(user == null || user.getUsername() == null || user.getPassword()== null){
+
+    public String regAdmin(User user) {
+        if (user == null || user.getUsername() == null || user.getPassword() == null) {
             log.error("Invalid user data provided");
             throw new IllegalArgumentException("User data is null or incomplete");
         }
         Optional<User> byUserName = findByUserName(user.getUsername());
-        if(byUserName.isPresent()){
+        if (byUserName.isPresent()) {
             log.error(" User with userName {} already exist", user.getUsername());
             throw new IllegalArgumentException("User already exist");
         }
-         User newUser = User.builder().
-                 username(user.getUsername()).
-                 password(encoderConfig.passwordEncoder().encode(user.getPassword())).
-                 roles(Set.of("ADMIN")).
-                 build();
+        User newUser = User.builder().
+                username(user.getUsername()).
+                password(encoderConfig.passwordEncoder().encode(user.getPassword())).
+                roles(Set.of("ADMIN")).
+                build();
 
         try {
             userRepository.save(newUser);
             log.info("User {} elevated to admin was saved", user.getUsername());
             return jwtService.generateToken(newUser);
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error("Error saving user {}: {}", user.getUsername(), e.getMessage());
             throw new RuntimeException("Error updating user details", e);
         }
+    }
+
+    public void deleteUser(User user) {
+        userRepository.findByUsername(user.getUsername()).ifPresentOrElse(
+                user1 -> {
+                    userRepository.delete(user1);
+                    log.info("User {} delete successfully",user.getUsername());
+                },
+                () ->
+                        log.error("User {} not found", user.getUsername())
+        );
     }
 }

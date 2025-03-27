@@ -53,10 +53,5 @@ public class UserController {
     public JwtAuthenticationResponse logAdmin(@RequestBody User user){
         return authenticationService.signInAdmin(user);
     }
-    @GetMapping("/getCurrentUser")
-    public ResponseEntity<User> ad(){
-        User user = userService.getCurrentUser();
-        return ResponseEntity.ok(user);
-    }
 
 }
