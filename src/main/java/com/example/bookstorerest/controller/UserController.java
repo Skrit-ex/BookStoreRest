@@ -13,10 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Optional;
@@ -29,8 +26,6 @@ import java.util.Set;
 @Tag(name = "Authentication")
 public class UserController {
 
-    @Autowired
-    private UserRepository userRepository;
     @Autowired
     private AuthenticationService authenticationService;
     @Autowired
@@ -52,6 +47,16 @@ public class UserController {
     public ResponseEntity <JwtAuthenticationResponse> endpoint(@RequestBody User user){
         String jwt = userService.regAdmin(user);
         return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
+    }
+    @Operation(summary = "Authentication Admin")
+    @PostMapping("/logAdmin")
+    public JwtAuthenticationResponse logAdmin(@RequestBody User user){
+        return authenticationService.signInAdmin(user);
+    }
+    @GetMapping("/getCurrentUser")
+    public ResponseEntity<User> ad(){
+        User user = userService.getCurrentUser();
+        return ResponseEntity.ok(user);
     }
 
 }

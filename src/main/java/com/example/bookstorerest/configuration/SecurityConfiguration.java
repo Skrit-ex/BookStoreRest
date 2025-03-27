@@ -54,7 +54,7 @@ public class SecurityConfiguration {
                         .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/swagger-resources/*")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/v3/api-docs/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/endpoint"), new AntPathRequestMatcher("/admin/**")).hasRole("ADMIN")
+                        .requestMatchers(new AntPathRequestMatcher("/admin/**")).hasAuthority("ADMIN")
                         .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider())

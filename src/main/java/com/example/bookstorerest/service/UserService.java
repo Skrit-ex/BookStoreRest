@@ -153,8 +153,7 @@ public class UserService implements UserDetailsService {
         try {
             userRepository.save(newUser);
             log.info("User {} elevated to admin was saved", user.getUsername());
-            String jwt = jwtService.generateToken(newUser);
-            return jwt;
+            return jwtService.generateToken(newUser);
         }catch (Exception e){
             log.error("Error saving user {}: {}", user.getUsername(), e.getMessage());
             throw new RuntimeException("Error updating user details", e);

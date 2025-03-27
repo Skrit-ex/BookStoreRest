@@ -9,6 +9,7 @@ import com.example.bookstorerest.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -59,6 +60,15 @@ public class AuthenticationService {
                 .loadUserByUsername(request.getUsername());
 
         var jwt = jwtService.generateToken(user);
+        return new JwtAuthenticationResponse(jwt);
+    }
+    public JwtAuthenticationResponse signInAdmin(User user) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                user.getUsername(),
+                user.getPassword()
+        ));
+        UserDetails userDetails = userService.loadUserByUsername(user.getUsername());
+        String jwt = jwtService.generateToken(userDetails);
         return new JwtAuthenticationResponse(jwt);
     }
 }
